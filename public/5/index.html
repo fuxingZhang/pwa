@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>pwa</title>
+  <link rel="manifest" href="/5/manifest.json">
+</head>
+<body>
+  <div>1. open in mobile</div>
+  <div>2. add to screen</div>
+  <div>
+    <button id="btnSave" disabled>Click this to show the prompt</button>
+  </div>
+  <script>
+    window.addEventListener('load', () => {
+      if('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/5/service-worker.js').then(function(registration) {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }).catch(function(err) {
+          console.log('ServiceWorker registration failed: ', err)
+        })
+      }	
+
+      let btn = document.querySelector('#btnSave')
+      let savedPrompt = void 0;
+
+      window.addEventListener('beforeinstallprompt', e => {
+        // 阻止提示添加到主屏幕
+        // e.preventDefault();
+        // return false;
+
+        // 判断用户行为
+        // e.userChoice.then(result => {
+        //   console.log(result.outcome);
+        //   if(result.outcome == 'dismissed') {
+        //     console.log('dismissed')
+        //   } else {
+        //     console.log('added')
+        //   }
+        // })
+
+        // 按钮提示
+        e.preventDefault();
+        btn.removeAttribute('disabled');
+        savedPrompt = e;
+        return false;
+      })
+
+      btn.addEventListener('click', () => {
+        if(savedPrompt == undefined) return;
+        savedPrompt.prompt();
+
+        savedPrompt.userChoice.then(result => {
+          if(result.outcome == 'dismissed') {
+            console.log('User dismissed homescreen install');
+          } else {
+            console.log('User added to homescreen')
+          }
+          savedPrompt = null;
+        })
+      })
+    })
+	</script>
+</body>
+</html>

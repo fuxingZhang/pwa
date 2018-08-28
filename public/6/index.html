@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>pwa</title>
+  <link rel="manifest" href="/6/manifest.json">
+</head>
+<body>
+  <div>notification</div>
+  <script>
+    let endpoint;
+    let key;
+    let authSecret;
+    let vapidPublicKey = '';
+
+    function urlBase64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - base64String.length % 4) % 4);
+      const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+      const rawData = window.atob(base64);
+      const outputArray = new Uint8Array(rawData.length);
+
+      for(let i = 0;i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+      }
+      return outputArray
+    }
+
+    if('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/6/service-worker.js').then(function(registration) {
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+
+        return registration.pushManager.getSubscription().then(subscription => {
+          if(subscription) return;
+
+          return registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+          }).then(subscription => {
+            let rawKey = subscription.getKey ? subscription.getKey('p256dh') : '';
+            key = rawKey ? btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey))) : '';
+            let rawAuthSecret = subscription.getKey ? subscription.getKey('auth') : '';
+            authSecret = rawAuthSecret ? btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret))) : '';
+            endpoint = subscription.endpoint;
+
+            return fetch('./register', {
+              method: 'post',
+              headers: new Headers({
+                'content-type': 'application/json'
+              }),
+              body: JSON.stringify({
+                endpoint,
+                key,
+                authSecret
+              })
+            })
+          })
+        })
+      }).catch(function(err) {
+        console.log('ServiceWorker registration failed: ', err)
+      })
+    }
+	</script>
+</body>
+</html>
