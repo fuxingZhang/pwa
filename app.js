@@ -8,18 +8,23 @@ app.use(koaBody());
 // const cors = require('koa2-cors')
 // app.use(cors())
 
-// console
+// logger
 app.use(async (ctx, next) => {
-  const start = Date.now()
-  await next()
-  const ms = Date.now() - start
-  ctx.set('X-Response-Time', `${ms}ms`);
-  console.info(`${ctx.method} ${ctx.url} - ${ms}`)
+  await next();
+  const rt = ctx.response.get('X-Response-Time');
+  console.log(`${ctx.method} ${ctx.url} - ${rt}`);
 });
 
-const path = require('path')
+// x-response-time
+app.use(async (ctx, next) => {
+  const start = Date.now();
+  await next();
+  const ms = Date.now() - start;
+  ctx.set('X-Response-Time', `${ms}ms`);
+});
+
 serve = require("koa-static")
-app.use(serve(path.join(__dirname, "/public")))
+app.use(serve("./public"))
 
 // error
 app.on('error', async (err, ctx) => {
