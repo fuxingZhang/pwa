@@ -9,11 +9,39 @@
 </head>
 <body>
   <div>notification</div>
+  <div>
+    <button type="button" id="unsubscribe">unsubscribe</button>
+  </div>
+
+  <!-- 取消订阅 -->
+  <script>
+    function unsubscribe () {
+      if('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then( ServiceWorkerRegistration => {
+          ServiceWorkerRegistration.pushManager.getSubscription().then( subscription => {
+            if(!subscription) {
+              console.log('not subscribed, nothing to do.')
+              return
+            }
+            subscription.unsubscribe().then( () => {
+              console.log('Sunccessfully unsubscribed!')
+            })
+            .catch(e => {
+              console.log('error thrown while unsubscribing from push messaging', e)
+            })
+          })
+        })
+      }
+    }
+
+    document.querySelector('#unsubscribe').addEventListener('click', unsubscribe)
+  </script>
+
   <script>
     let endpoint;
     let key;
     let authSecret;
-    let vapidPublicKey = '';
+    let vapidPublicKey = 'BLrm5bUO9K-jOl01pv8vjSPQHLoR8H2aSjl1Kt0-xNTtw74Xx1DuXdKseosKeKH61zu7oOyRrbS80NL7-ctqoC0';
 
     function urlBase64ToUint8Array(base64String) {
       const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -32,7 +60,8 @@
         console.log('ServiceWorker registration successful with scope: ', registration.scope);
 
         return registration.pushManager.getSubscription().then(subscription => {
-          if(subscription) return;
+          console.log(11, subscription)
+          // if(subscription) return;
 
           return registration.pushManager.subscribe({
             userVisibleOnly: true,
@@ -43,8 +72,8 @@
             let rawAuthSecret = subscription.getKey ? subscription.getKey('auth') : '';
             authSecret = rawAuthSecret ? btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret))) : '';
             endpoint = subscription.endpoint;
-
-            return fetch('./register', {
+            
+            return fetch('/api/webpush/register', {
               method: 'post',
               headers: new Headers({
                 'content-type': 'application/json'

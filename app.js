@@ -1,6 +1,9 @@
 const {exec} = require("child_process")
 const Koa = require('koa')
 const app = new Koa()
+const Router = require('koa-router')
+const routes = require("./routes");
+const serve = require("koa-static")
 const koaBody = require('koa-body')
 app.use(koaBody());
 
@@ -23,8 +26,23 @@ app.use(async (ctx, next) => {
   ctx.set('X-Response-Time', `${ms}ms`);
 });
 
-serve = require("koa-static")
 app.use(serve("./public"))
+
+for (let router of routes) {
+  if (typeof router.routes === "function") {
+    app.use(router.routes());
+  }
+  if (typeof router.allowedMethods === "function") {
+    app.use(router.allowedMethods());
+  }
+}
+
+const IndexRouter = new Router()
+IndexRouter.all('*', async  ctx => {
+  ctx.throw(404, 'Not Found')
+})
+
+app.use(IndexRouter.routes())
 
 // error
 app.on('error', async (err, ctx) => {
@@ -39,6 +57,7 @@ app.on('error', async (err, ctx) => {
   // production
   // err.message = err.status >= 500 ? 'Internal Server Error' : err.message
   // err.message = err.status < 500 ? err.message : 'Internal Server Error'
+  console.log(err)
 });
 
 process.on("uncaughtException", function (err) {
