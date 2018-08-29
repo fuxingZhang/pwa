@@ -13,7 +13,7 @@ self.addEventListener('fetch', event => {
 
 	// save-data
 	if(headers.get('save-data')) {
-		if(event.request.url.includes('/4/webfont/')) {
+		if(event.request.url.includes('webfont/')) {
 			console.log('webfont', event.request.url)
 			event.respondWith(new Response('', {
 				status: 417,

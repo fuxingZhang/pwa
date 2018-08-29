@@ -9,12 +9,12 @@
 		}
 	</style>
 <body>
-	<img id="img" src="/2/images/hello.png">
+	<img id="img" src="images/hello.png">
 
-	<script async src="/2/js/script.js"></script>
+	<script async src="js/script.js"></script>
 	<script>
 		if('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('/2/service-worker.js').then(function(registration) {
+			navigator.serviceWorker.register('service-worker.js').then(function(registration) {
 				console.log('ServiceWorker registration successful with scope: ', registration.scope);
 			}).catch(function(err) {
 				console.log('ServiceWorker registration failed: ', err)

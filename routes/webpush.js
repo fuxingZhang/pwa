@@ -30,9 +30,7 @@ router
         p256dh: key
       }
     }
-    const fs = require('fs')
-    fs.writeFileSync('./1.js')
-
+  
     const res = await webpush.sendNotification(pushSubscription, JSON.stringify({
       msg: 'thanks for registering',
       url: 'http://localhost:3000',
