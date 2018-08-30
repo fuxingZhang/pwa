@@ -44,5 +44,11 @@ router
     // can not test for no vpn
     // ctx.body = 'what ?'
   })
+  .post('/sendMessage', async ctx => {
+    console.log(ctx.request.body)
+    ctx.body = {
+      message: 'get message'
+    }
+  })
 
 module.exports = router
