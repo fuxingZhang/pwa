@@ -6,6 +6,9 @@ const offlineUrl = 'offline-page.html'
 const index = 'index.html'
 
 self.addEventListener('install', event => {
+	// book page-57
+	// event.waitUntil(self.skipWaiting())
+	// mdn 
 	self.skipWaiting()
 
 	event.waitUntil(caches.open(cachename).then(cache => {

@@ -2,14 +2,52 @@
 <html>
 <head>
 	<title>pwa</title>
+	<style>
+		.showOfflineNotification {
+			background-color: black;
+			height: 40px;
+			color: white;
+			text-align: center;
+			padding-top: 20px;
+			font-size: 20px;
+			margin-top: 0px;
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			overflow: hidden;
+			z-index: 101;
+		}
+	
+		.hideOfflineNotification {
+			display: none;
+		}
+	</style>
 </head>
 <body>
 	<div>pwa</div>
+	<div id="offline"></div>
 	<a href="offline-page.html">offline-page</a>
 	<script src="sw.js"></script>
 </body>
-<script>
-</script>
+	<script>
+		let offlineNotification = document.querySelector('#offline')
+
+		function showIndicator() {
+			console.log('offline')
+			offlineNotification.innerHTML = 'You are currently offline.';
+			offlineNotification.className = 'showOfflineNotification';
+		}
+
+		function hideIndicator() {
+			console.log('online')
+			offlineNotification.className = 'hideOfflineNotification';
+		}
+
+		window.addEventListener('online',  hideIndicator);
+		window.addEventListener('offline', showIndicator);
+	</script>
+
 	<script type="text/javascript">
 		if('serviceWorker' in navigator) {
 			navigator.serviceWorker.register('sw.js').then(function(registration) {
