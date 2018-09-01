@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>pwa</title>
+</head>
+  <div id="div"></div>
+<body>
+  <script>
+    // iphone 测试不能用
+    let div = document.querySelector('#div');
+    alert(navigator.bluetooth) // undifined
+    alert(navigator.bluetooth.requestDevice)
+
+    navigator.bluetooth.requestDevice({
+      acceptAllDevices: true,
+      optionalServices: ['battery_service']
+    })
+    .then(device => {
+      alert(device.name)
+      console.log(device.name);
+      div.innerHTML = device.name;
+    })
+    .catch(error => {
+      console.log(error)
+      alert(error)
+    })
+  </script>
+</body>
+</html>

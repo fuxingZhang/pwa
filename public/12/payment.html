@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>pwa</title>
+</head>
+  <div id="div"></div>
+<body>
+  <script>
+    // iphone 测试不能用, chrome可用
+    alert(window.PaymentRequest)
+    if(window.PaymentRequest) {
+      let paymentMethods = [{
+        supportedMethods: ['basic-card'],
+        data: {
+          supportedNetworks: ['visa', 'mastercard']
+        }
+      }];
+
+      let details = {
+        displayItems: [{
+          label: 'Original donation amount',
+          amount: {
+            currency: 'USD',
+            value: '65.00'
+          }
+        }],
+        total: {
+          label: 'Total',
+          amount: {
+            currency: 'USD',
+            value: '65.00'
+          }
+        }
+      }
+
+      let request = new PaymentRequest(paymentMethods, details);
+
+      request.show().then(PaymentResponse => {
+        let paymentData = {
+          method: PaymentRequest.methodName,
+          details: PaymentRequest.details
+        };
+        return fetch('/pay', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(paymentData)
+        })
+        .then(res => {
+          if(res.status === 200) {
+            return res.json()
+          } else {
+            throw 'Payment Error'
+          }
+        })
+        .then(res => {
+          PaymentResponse.complete('success')
+        }, err => {
+          PaymentResponse.complete('fail')
+        })
+      })
+      .catch(err => {
+        console.log('Something went wrong', err)
+      })
+    }
+  </script>
+</body>
+</html>

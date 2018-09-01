@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>pwa</title>
+</head>
+  <div id="div"></div>
+<body>
+  <script>
+    // iphone 测试不能用
+    alert(navigator.share)
+    if(navigator.share) {
+      navigator.share({
+        title: document.title,
+        url: location.host
+      })
+      .then(() => console.log('Successful share'))
+      .catch(error => console.log('Error sharing: ', error))
+    }
+  </script>
+</body>
+</html>
