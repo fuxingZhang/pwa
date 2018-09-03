@@ -25,9 +25,10 @@ function sendMessage(){
   var payload = {
     name: document.getElementById('name').value,
     email: document.getElementById('email').value,
-    subject: document.getElementById('subject').value,
-    message: document.getElementById('message').value,
+    subject: document.getElementById('subject').value
   };
+
+  console.log(payload)
 
   // Send the POST request to the server
   return fetch('/api/webpush/sendMessage/', {
@@ -46,8 +47,7 @@ function queueMessage(){
   var payload = {
     name: document.getElementById('name').value,
     email: document.getElementById('email').value,
-    subject: document.getElementById('subject').value,
-    message: document.getElementById('message').value,
+    subject: document.getElementById('subject').value
   };
 
   // Save to indexdb
