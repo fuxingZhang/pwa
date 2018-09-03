@@ -72,9 +72,23 @@
         })
       });
 
-      navigator.serviceWorker.register('sw.js?v=2')
+      navigator.serviceWorker.register(`sw.js?v=${Date.now()}`)
         .then(registration => navigator.serviceWorker.ready)
         .then(registration => {
+          // 定时同步  https://github.com/WICG/BackgroundSync/blob/master/explainer.md
+          // 测试发现chrome还不能运行
+          // registration.periodicSync.register({
+          //   tag: 'zfx',
+          //   minPeriod: 2000,
+          //   powerState: 'avoid-draining',
+          //   networkState: 'avoid-cellular'
+          // }).then(periodicSyncReg => {
+          //   console.log('do something')
+          // })
+          // .catch(e => {
+          //   console.log('failed')
+          // })
+
           document.getElementById('submit').addEventListener('click', () => {
             sendMessage().catch(e => {
               console.log(e)
