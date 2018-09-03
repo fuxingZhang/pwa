@@ -16,7 +16,7 @@
       font-size: 20px;
       margin-top: 0px;
       position: absolute;
-      top: 0;
+      bottom: 0;
       left: 0;
       right: 0;
       overflow: hidden;
@@ -25,6 +25,9 @@
 
     .hideOfflineNotification {
       display: none;
+    }
+    .red{
+      color: red;
     }
   </style>
 </head>
@@ -61,12 +64,12 @@
           headers: new Headers({ 'content-type': 'application/json' }),
           body: JSON.stringify(value)
         })
-          .then(response => {
-            if (response.status >= 200 && response.status < 300) {
-              idbKeyval.delete('sendMessage');
-              console.log('deleted idb')
-            }
-          })
+        .then(response => {
+          if (response.status >= 200 && response.status < 300) {
+            idbKeyval.delete('sendMessage');
+            console.log('deleted idb')
+          }
+        })
       });
 
       navigator.serviceWorker.register('sw.js?v=2')
@@ -82,6 +85,14 @@
             });
           });
         });
+
+			navigator.serviceWorker.addEventListener('message', event => {
+        console.log(event.data);
+        if(event.data.msg != 'sync success') return;
+        let messageNotification = document.getElementById('message');
+        messageNotification.innerHTML = 'mess sent';
+        messageNotification.className = 'red';
+			});
     } else {
       document.getElementById('submit').addEventListener('click', () => {
         sendMessage()     // Else fallback and send the actual message

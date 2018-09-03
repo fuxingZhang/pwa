@@ -15,6 +15,7 @@
 	-->
 	<img id="img" src="images/1.jpg">
 	<img id="img" src="images/2.jpg">
+	<button id="app-refresh">postMessage</button>
 </body>
 <script>
 </script>
@@ -27,6 +28,15 @@
 			}).catch(function(err) {
 				console.log('ServiceWorker registration failed: ', err)
 			})
+
+			navigator.serviceWorker.addEventListener('message', event => {
+				console.log('data:', event.data)
+			});
+
+			// 点击指定 DOM 时就给Service Worker 发送消息
+			document.getElementById('app-refresh').addEventListener('click', function () {
+					navigator.serviceWorker.controller && navigator.serviceWorker.controller.postMessage('sw.updatedone');
+			});
 		}
 	</script>
 </html>

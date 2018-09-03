@@ -4,7 +4,7 @@ importScripts('./js/idb-keyval.js');
 console.log('sw-v2')
 
 // The sync event for the contact form
-self.addEventListener('sync', function (event) {
+self.addEventListener('sync', event => {
   console.log(11111)
   if (event.tag === 'contact-email') {
     event.waitUntil(idbKeyval.get('sendMessage').then(value =>
@@ -17,6 +17,16 @@ self.addEventListener('sync', function (event) {
         console.log(response)
         if (response.status >= 200 && response.status < 300) {
           console.log('sync success')
+
+          self.clients.matchAll().then(function (clients){
+            clients.forEach(function(client){
+              client.postMessage({
+                msg: "sync success",
+                ohter: 'hi'
+              });
+            });
+          });
+
           idbKeyval.delete('sendMessage');
         }
       })
